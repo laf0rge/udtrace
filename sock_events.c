@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 #include <sys/syscall.h>
 #include <sys/types.h>
+#include <sys/un.h>
 #include <unistd.h>
 
 #ifdef __ANDROID__
@@ -24,13 +25,6 @@
 
 #define IS_OUT	true
 #define IS_IN	false
-
-static void trace_data(int fd, bool is_out, const char *fn, const uint8_t *data, unsigned int len)
-{
-	if (!data || !len)
-		return;
-	fprintf(stderr, "%d %s %c %s\n", fd, fn, is_out ? 'W' : 'R', udtrace_hexdump(data, len, ""));
-}
 
 static void trace_iov(int fd, bool is_out, const char *fn, int ret,
 		      const struct iovec *iovec, int iovec_count)
@@ -46,7 +40,7 @@ static void trace_iov(int fd, bool is_out, const char *fn, int ret,
 		if (remain < vec->iov_len)
 			written_len = remain;
 
-		trace_data(fd, is_out, fn, vec->iov_base, written_len);
+		udtrace_data(fd, is_out, fn, vec->iov_base, written_len);
 
 		remain -= written_len;
 	}
@@ -60,16 +54,26 @@ void sock_ev_socket(int fd, int domain, int type, int protocol)
 {
 	if (domain != AF_UNIX)
 		return;
-	add_fd(fd);
+	udtrace_add_fd(fd);
 }
 
 void sock_ev_bind(int fd, int ret, int err, const struct sockaddr *addr, socklen_t len)
 {
+	const struct sockaddr_un *sun = (const struct sockaddr_un *) addr;
+	if (ret < 0)
+		return;
+	LOG("bind(%d, \"%s\")\n", fd, sun->sun_path);
+	udtrace_fd_set_path(fd, sun->sun_path);
 }
 
 void sock_ev_connect(int fd, int ret, int err, const struct sockaddr *addr,
                      socklen_t len)
 {
+	const struct sockaddr_un *sun = (const struct sockaddr_un *) addr;
+	if (ret < 0)
+		return;
+	LOG("connect(%d, \"%s\")\n", fd, sun->sun_path);
+	udtrace_fd_set_path(fd, sun->sun_path);
 }
 
 void sock_ev_listen(int fd, int ret, int err, int backlog)
@@ -81,7 +85,7 @@ void sock_ev_accept(int fd, int ret, int err, struct sockaddr *addr,
 {
 	if (ret < 0)
 		return;
-	add_fd(ret);
+	udtrace_add_fd(ret);
 }
 
 void sock_ev_accept4(int fd, int ret, int err, struct sockaddr *addr,
@@ -89,7 +93,7 @@ void sock_ev_accept4(int fd, int ret, int err, struct sockaddr *addr,
 {
 	if (ret < 0)
 		return;
-	add_fd(ret);
+	udtrace_add_fd(ret);
 }
 
 void sock_ev_send(int fd, int ret, int err, const void *buf, size_t bytes,
@@ -97,14 +101,14 @@ void sock_ev_send(int fd, int ret, int err, const void *buf, size_t bytes,
 {
 	if (ret <= 0)
 		return;
-	trace_data(fd, IS_OUT, "send", buf, ret);
+	udtrace_data(fd, IS_OUT, "send", buf, ret);
 }
 
 void sock_ev_recv(int fd, int ret, int err, void *buf, size_t bytes, int flags)
 {
 	if (ret <= 0)
 		return;
-	trace_data(fd, IS_IN, "recv", buf, ret);
+	udtrace_data(fd, IS_IN, "recv", buf, ret);
 }
 
 void sock_ev_sendto(int fd, int ret, int err, const void *buf, size_t bytes,
@@ -112,7 +116,7 @@ void sock_ev_sendto(int fd, int ret, int err, const void *buf, size_t bytes,
 {
 	if (ret <= 0)
 		return;
-	trace_data(fd, IS_OUT, "sendto", buf, ret);
+	udtrace_data(fd, IS_OUT, "sendto", buf, ret);
 }
 
 void sock_ev_recvfrom(int fd, int ret, int err, void *buf, size_t bytes,
@@ -120,7 +124,7 @@ void sock_ev_recvfrom(int fd, int ret, int err, void *buf, size_t bytes,
 {
 	if (ret <= 0)
 		return;
-	trace_data(fd, IS_IN, "recvfrom", buf, ret);
+	udtrace_data(fd, IS_IN, "recvfrom", buf, ret);
 }
 
 void sock_ev_sendmsg(int fd, int ret, int err, const struct msghdr *msg,
@@ -168,40 +172,40 @@ void sock_ev_write(int fd, int ret, int err, const void *buf, size_t bytes)
 {
 	if (ret <= 0)
 		return;
-	trace_data(fd, IS_OUT, "write", buf, ret);
+	udtrace_data(fd, IS_OUT, "write", buf, ret);
 }
 
 void sock_ev_read(int fd, int ret, int err, void *buf, size_t bytes)
 {
 	if (ret <= 0)
 		return;
-	trace_data(fd, IS_IN, "read", buf, ret);
+	udtrace_data(fd, IS_IN, "read", buf, ret);
 }
 
 void sock_ev_close(int fd, int ret, int err)
 {
-	del_fd(fd);
+	udtrace_del_fd(fd);
 }
 
 void sock_ev_dup(int fd, int ret, int err)
 {
 	if (ret >= 0)
-		add_fd(ret);
+		udtrace_add_fd(ret);
 }
 
 void sock_ev_dup2(int fd, int ret, int err, int newfd)
 {
 	if (ret >= 0) {
-		del_fd(newfd);
-		add_fd(ret);
+		udtrace_del_fd(newfd);
+		udtrace_add_fd(ret);
 	}
 }
 
 void sock_ev_dup3(int fd, int ret, int err, int newfd, int flags)
 {
 	if (ret >= 0) {
-		del_fd(newfd);
-		add_fd(ret);
+		udtrace_del_fd(newfd);
+		udtrace_add_fd(ret);
 	}
 }
 

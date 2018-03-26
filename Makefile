@@ -1,4 +1,5 @@
 LIB_SRCS = utils.c sock_events.c libc_overrides.c
+CFLAGS = -Wall
 
 
 default: libudtrace.so
