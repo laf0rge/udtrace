@@ -9,6 +9,11 @@
 
 #define MAX_UNIX_FDS	32
 
+#ifdef ENABLE_TITAN
+extern void mncc_dissector(int fd, bool is_out, const char *fn, const uint8_t *data, unsigned int len);
+extern void pcu_dissector(int fd, bool is_out, const char *fn, const uint8_t *data, unsigned int len);
+#endif
+
 /***********************************************************************
  * Utility functions
  ***********************************************************************/
@@ -60,7 +65,13 @@ static struct sock_state unix_fds[MAX_UNIX_FDS];
 __attribute__ ((constructor)) static void udtrace_init(void)
 {
 	int i;
-	LOG("Unix Domain Socket Trace initialized\n");
+	LOG("Unix Domain Socket Trace initialized (TITAN support "
+#ifdef ENABLE_TITAN
+		"enabled"
+#else
+		"DISABLED"
+#endif
+			")\n");
 	for (i = 0; i < ARRAY_SIZE(unix_fds); i++) {
 		unix_fds[i] = (struct sock_state) { -1, NULL, NULL };
 	}
@@ -97,8 +108,16 @@ void udtrace_del_fd(int fd)
 
 static void udtrace_resolve_dissector(struct sock_state *ss)
 {
-	/* FIXME: actual useful dissectors resovled by path */
-	ss->dissector = &default_dissector;
+	/* actual useful dissectors resovled by path */
+	if (0) { }
+#ifdef ENABLE_TITAN
+	else if (strstr(ss->path, "mncc"))
+		ss->dissector = mncc_dissector;
+	else if (strstr(ss->path, "pcu"))
+		ss->dissector = pcu_dissector;
+#endif
+	else
+		ss->dissector = &default_dissector;
 }
 
 /* set the path of a given fd */
