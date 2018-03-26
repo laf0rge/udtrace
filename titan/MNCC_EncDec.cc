@@ -47,8 +47,11 @@ static MNCC__bearer__cap dec_bcap(const struct gsm_mncc_bearer_cap *in)
 					(GSM48__bcap__transp) in->data.transp,
 					(GSM48__bcap__modem__type) in->data.modem_type);
 
-	for (unsigned int i = 0; i < ARRAY_SIZE(in->speech_ver); i++)
-		vers[0] = in->speech_ver[0];
+	for (unsigned int i = 0; i < ARRAY_SIZE(in->speech_ver); i++) {
+		vers[i] = in->speech_ver[i];
+		if (vers[i] == -1)
+			break;
+	}
 
 	return MNCC__bearer__cap(in->transfer, in->mode, in->coding, in->radio, in->speech_ctm,
 				 vers, data);
