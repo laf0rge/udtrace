@@ -19,7 +19,7 @@ Usage
 Simply build **libudtrace.so** using the **make** command, and then
 start your to-be-traced program with
 
-  LD_PRELOAD=libudtrace.os
+  LD_PRELOAD=libudtrace.so
 
 e.g.
 
@@ -62,7 +62,7 @@ When data is written to the socket:
   9 write W 00040000050000004403000008000000680000001c0300002c03000000000000
 
 Where
- * *9* is the file dsecriptor on which the event happened
+ * *9* is the file descriptor on which the event happened
  * *read/write* is the name of the syscall, could e.g. also be sendmsg / readv / etc.
  * *R|W* is Read / Write (from the process point of view)
  * followed by a hex-dump of the raw data.  Only data successfully
