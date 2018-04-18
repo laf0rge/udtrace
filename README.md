@@ -97,3 +97,13 @@ something like:
 
   LD_LIBRARY_PATH=/usr/lib/titan LD_PRELOAD=libudtrace.so systemctl status
 
+Related Work
+------------
+
+stealth had implemented a kernel-based unix domain tracer in 2009, which
+you can find in http://www.suse.de/%7Ekrahmer/unixdump-0.42.tgz
+
+While fundamentally, a kernel based tracer is much superior to the LD_PRELOAD
+approach of udtrace, I think there's little use of it if it's not merged into
+the mainline kernel, and hence available with stock distributions, as well
+as maintained for all kernel internal API changes.
