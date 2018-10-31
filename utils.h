@@ -6,6 +6,9 @@
 #define LOG(fmt, args ...) \
 	fprintf(stderr, ">>> UDTRACE: " fmt, ## args)
 
+/* find the state corresponding to a given file descriptor */
+struct sock_state *udtrace_sstate_by_fd(int fd);
+
 /* add a file descriptor from the list of to-be-traced ones */
 void udtrace_add_fd(int fd);
 

@@ -80,30 +80,34 @@ __attribute__ ((constructor)) static void udtrace_init(void)
 /* add a file descriptor from the list of to-be-traced ones */
 void udtrace_add_fd(int fd)
 {
-	int i;
-	for (i = 0; i < ARRAY_SIZE(unix_fds); i++) {
-		if (unix_fds[i].fd == -1) {
-			LOG("Adding FD %d\n", fd);
-			unix_fds[i].fd = fd;
-			return;
-		}
+	struct sock_state *ss;
+
+	/* Find an unused state in unix_fds */
+	ss = udtrace_sstate_by_fd(-1);
+	if (!ss) {
+		LOG("Couldn't add UNIX FD %d (no space in unix_fds)\n", fd);
+		return;
 	}
-	LOG("Couldn't add UNIX FD %d (no space in unix_fds)\n", fd);
+
+	LOG("Adding FD %d\n", fd);
+	ss->fd = fd;
 }
 
 /* delete a file descriptor from the list of to-be-traced ones */
 void udtrace_del_fd(int fd)
 {
-	int i;
-	for (i = 0; i < ARRAY_SIZE(unix_fds); i++) {
-		if (unix_fds[i].fd == fd) {
-			LOG("Removing FD %d\n", fd);
-			free((void *) unix_fds[i].path);
-			unix_fds[i] = (struct sock_state) { -1, NULL, NULL };
-			return;
-		}
+	struct sock_state *ss;
+
+	/* Find the corresponding state in unix_fds */
+	ss = udtrace_sstate_by_fd(fd);
+	if (!ss) {
+		LOG("Couldn't delete UNIX FD %d (no such FD in unix_fds)\n", fd);
+		return;
 	}
-	LOG("Couldn't delete UNIX FD %d (no such FD)\n", fd);
+
+	LOG("Removing FD %d\n", fd);
+	free((void *) ss->path);
+	*ss = (struct sock_state) { -1, NULL, NULL };
 }
 
 static void udtrace_resolve_dissector(struct sock_state *ss)
@@ -123,14 +127,17 @@ static void udtrace_resolve_dissector(struct sock_state *ss)
 /* set the path of a given fd */
 void udtrace_fd_set_path(int fd, const char *path)
 {
-	int i;
-	for (i = 0; i < ARRAY_SIZE(unix_fds); i++) {
-		if (unix_fds[i].fd == fd) {
-			unix_fds[i].path = strdup(path);
-			udtrace_resolve_dissector(&unix_fds[i]);
-			return;
-		}
+	struct sock_state *ss;
+
+	/* Find the corresponding state in unix_fds */
+	ss = udtrace_sstate_by_fd(fd);
+	if (!ss) {
+		LOG("Couldn't set path for UNIX FD %d (no such FD in unix_fds)\n", fd);
+		return;
 	}
+
+	ss->path = strdup(path);
+	udtrace_resolve_dissector(ss);
 }
 
 struct sock_state *udtrace_sstate_by_fd(int fd)
