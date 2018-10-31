@@ -21,6 +21,9 @@ struct sock_state *udtrace_sstate_by_fd(int fd);
 /* add a file descriptor from the list of to-be-traced ones */
 void udtrace_add_fd(int fd);
 
+/* add a file descriptor from the list of to-be-traced ones */
+void udtrace_add_fd_child(int pfd, int cfd);
+
 /* delete a file descriptor from the list of to-be-traced ones */
 void udtrace_del_fd(int fd);
 

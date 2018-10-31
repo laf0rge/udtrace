@@ -85,6 +85,32 @@ void udtrace_add_fd(int fd)
 	ss->fd = fd;
 }
 
+/* add a file descriptor from the list of to-be-traced ones */
+void udtrace_add_fd_child(int pfd, int cfd)
+{
+	struct sock_state *pss, *css;
+
+	/* Find the parent socket state first */
+	pss = udtrace_sstate_by_fd(pfd);
+	if (!pss) {
+		LOG("Couldn't find parent UNIX FD %d for %d\n", pfd, cfd);
+		return;
+	}
+
+	/* Find an unused state in unix_fds */
+	css = udtrace_sstate_by_fd(-1);
+	if (!css) {
+		LOG("Couldn't add UNIX FD %d (no space in unix_fds)\n", cfd);
+		return;
+	}
+
+	LOG("Adding FD %d as a child of %d\n", cfd, pfd);
+
+	css->dissector = pss->dissector;
+	css->path = strdup(pss->path);
+	css->fd = cfd;
+}
+
 /* delete a file descriptor from the list of to-be-traced ones */
 void udtrace_del_fd(int fd)
 {
