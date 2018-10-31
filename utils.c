@@ -133,7 +133,7 @@ void udtrace_fd_set_path(int fd, const char *path)
 	}
 }
 
-const struct sock_state *udtrace_sstate_by_fd(int fd)
+struct sock_state *udtrace_sstate_by_fd(int fd)
 {
 	int i;
 	for (i = 0; i < ARRAY_SIZE(unix_fds); i++) {
@@ -154,7 +154,7 @@ bool is_unix_socket(int fd)
 
 void udtrace_data(int fd, bool is_out, const char *fn, const uint8_t *data, unsigned int len)
 {
-	const struct sock_state *ss = udtrace_sstate_by_fd(fd);
+	struct sock_state *ss = udtrace_sstate_by_fd(fd);
 	if (!data || !len || !ss)
 		return;
 	ss->dissector(fd, is_out, fn, data, len);
