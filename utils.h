@@ -6,6 +6,15 @@
 #define LOG(fmt, args ...) \
 	fprintf(stderr, ">>> UDTRACE: " fmt, ## args)
 
+typedef void (*udtrace_dissector)(int fd, bool is_out, const char *fn,
+	const uint8_t *data, unsigned int len);
+
+struct sock_state {
+	int fd;
+	const char *path;
+	udtrace_dissector dissector;
+};
+
 /* find the state corresponding to a given file descriptor */
 struct sock_state *udtrace_sstate_by_fd(int fd);
 

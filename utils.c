@@ -47,18 +47,10 @@ static char *hexdump(const unsigned char *buf, int len, char *delim)
 	return hexd_buff;
 }
 
-typedef void (*udtrace_dissector)(int fd, bool is_out, const char *fn, const uint8_t *data, unsigned int len);
-
 static void default_dissector(int fd, bool is_out, const char *fn, const uint8_t *data, unsigned int len)
 {
 	fprintf(stderr, "%d %s %c %s\n", fd, fn, is_out ? 'W' : 'R', hexdump(data, len, ""));
 }
-
-struct sock_state {
-	int fd;
-	const char *path;
-	udtrace_dissector dissector;
-};
 
 static struct sock_state unix_fds[MAX_UNIX_FDS];
 
