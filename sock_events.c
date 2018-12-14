@@ -85,7 +85,8 @@ void sock_ev_accept(int fd, int ret, int err, struct sockaddr *addr,
 {
 	if (ret < 0)
 		return;
-	udtrace_add_fd(ret);
+	LOG("accept(fd=%d on parent fd=%d)\n", ret, fd);
+	udtrace_add_fd_child(fd, ret);
 }
 
 void sock_ev_accept4(int fd, int ret, int err, struct sockaddr *addr,
@@ -93,7 +94,8 @@ void sock_ev_accept4(int fd, int ret, int err, struct sockaddr *addr,
 {
 	if (ret < 0)
 		return;
-	udtrace_add_fd(ret);
+	LOG("accept(fd=%d on parent fd=%d)\n", ret, fd);
+	udtrace_add_fd_child(fd, ret);
 }
 
 void sock_ev_send(int fd, int ret, int err, const void *buf, size_t bytes,

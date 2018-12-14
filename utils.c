@@ -47,18 +47,10 @@ static char *hexdump(const unsigned char *buf, int len, char *delim)
 	return hexd_buff;
 }
 
-typedef void (*udtrace_dissector)(int fd, bool is_out, const char *fn, const uint8_t *data, unsigned int len);
-
 static void default_dissector(int fd, bool is_out, const char *fn, const uint8_t *data, unsigned int len)
 {
 	fprintf(stderr, "%d %s %c %s\n", fd, fn, is_out ? 'W' : 'R', hexdump(data, len, ""));
 }
-
-struct sock_state {
-	int fd;
-	const char *path;
-	udtrace_dissector dissector;
-};
 
 static struct sock_state unix_fds[MAX_UNIX_FDS];
 
@@ -80,30 +72,60 @@ __attribute__ ((constructor)) static void udtrace_init(void)
 /* add a file descriptor from the list of to-be-traced ones */
 void udtrace_add_fd(int fd)
 {
-	int i;
-	for (i = 0; i < ARRAY_SIZE(unix_fds); i++) {
-		if (unix_fds[i].fd == -1) {
-			LOG("Adding FD %d\n", fd);
-			unix_fds[i].fd = fd;
-			return;
-		}
+	struct sock_state *ss;
+
+	/* Find an unused state in unix_fds */
+	ss = udtrace_sstate_by_fd(-1);
+	if (!ss) {
+		LOG("Couldn't add UNIX FD %d (no space in unix_fds)\n", fd);
+		return;
 	}
-	LOG("Couldn't add UNIX FD %d (no space in unix_fds)\n", fd);
+
+	LOG("Adding FD %d\n", fd);
+	ss->fd = fd;
+}
+
+/* add a file descriptor from the list of to-be-traced ones */
+void udtrace_add_fd_child(int pfd, int cfd)
+{
+	struct sock_state *pss, *css;
+
+	/* Find the parent socket state first */
+	pss = udtrace_sstate_by_fd(pfd);
+	if (!pss) {
+		LOG("Couldn't find parent UNIX FD %d for %d\n", pfd, cfd);
+		return;
+	}
+
+	/* Find an unused state in unix_fds */
+	css = udtrace_sstate_by_fd(-1);
+	if (!css) {
+		LOG("Couldn't add UNIX FD %d (no space in unix_fds)\n", cfd);
+		return;
+	}
+
+	LOG("Adding FD %d as a child of %d\n", cfd, pfd);
+
+	css->dissector = pss->dissector;
+	css->path = strdup(pss->path);
+	css->fd = cfd;
 }
 
 /* delete a file descriptor from the list of to-be-traced ones */
 void udtrace_del_fd(int fd)
 {
-	int i;
-	for (i = 0; i < ARRAY_SIZE(unix_fds); i++) {
-		if (unix_fds[i].fd == fd) {
-			LOG("Removing FD %d\n", fd);
-			free((void *) unix_fds[i].path);
-			unix_fds[i] = (struct sock_state) { -1, NULL, NULL };
-			return;
-		}
+	struct sock_state *ss;
+
+	/* Find the corresponding state in unix_fds */
+	ss = udtrace_sstate_by_fd(fd);
+	if (!ss) {
+		LOG("Couldn't delete UNIX FD %d (no such FD in unix_fds)\n", fd);
+		return;
 	}
-	LOG("Couldn't delete UNIX FD %d (no such FD)\n", fd);
+
+	LOG("Removing FD %d\n", fd);
+	free((void *) ss->path);
+	*ss = (struct sock_state) { -1, NULL, NULL };
 }
 
 static void udtrace_resolve_dissector(struct sock_state *ss)
@@ -123,17 +145,20 @@ static void udtrace_resolve_dissector(struct sock_state *ss)
 /* set the path of a given fd */
 void udtrace_fd_set_path(int fd, const char *path)
 {
-	int i;
-	for (i = 0; i < ARRAY_SIZE(unix_fds); i++) {
-		if (unix_fds[i].fd == fd) {
-			unix_fds[i].path = strdup(path);
-			udtrace_resolve_dissector(&unix_fds[i]);
-			return;
-		}
+	struct sock_state *ss;
+
+	/* Find the corresponding state in unix_fds */
+	ss = udtrace_sstate_by_fd(fd);
+	if (!ss) {
+		LOG("Couldn't set path for UNIX FD %d (no such FD in unix_fds)\n", fd);
+		return;
 	}
+
+	ss->path = strdup(path);
+	udtrace_resolve_dissector(ss);
 }
 
-const struct sock_state *udtrace_sstate_by_fd(int fd)
+struct sock_state *udtrace_sstate_by_fd(int fd)
 {
 	int i;
 	for (i = 0; i < ARRAY_SIZE(unix_fds); i++) {
@@ -154,7 +179,7 @@ bool is_unix_socket(int fd)
 
 void udtrace_data(int fd, bool is_out, const char *fn, const uint8_t *data, unsigned int len)
 {
-	const struct sock_state *ss = udtrace_sstate_by_fd(fd);
+	struct sock_state *ss = udtrace_sstate_by_fd(fd);
 	if (!data || !len || !ss)
 		return;
 	ss->dissector(fd, is_out, fn, data, len);

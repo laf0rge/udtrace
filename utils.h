@@ -6,8 +6,23 @@
 #define LOG(fmt, args ...) \
 	fprintf(stderr, ">>> UDTRACE: " fmt, ## args)
 
+typedef void (*udtrace_dissector)(int fd, bool is_out, const char *fn,
+	const uint8_t *data, unsigned int len);
+
+struct sock_state {
+	int fd;
+	const char *path;
+	udtrace_dissector dissector;
+};
+
+/* find the state corresponding to a given file descriptor */
+struct sock_state *udtrace_sstate_by_fd(int fd);
+
 /* add a file descriptor from the list of to-be-traced ones */
 void udtrace_add_fd(int fd);
+
+/* add a file descriptor from the list of to-be-traced ones */
+void udtrace_add_fd_child(int pfd, int cfd);
 
 /* delete a file descriptor from the list of to-be-traced ones */
 void udtrace_del_fd(int fd);
