@@ -5,13 +5,13 @@ TYPE_HH=$(TYPE_MODULES:%=%_Types.hh)
 TYPE_OBJS=$(TYPE_MODULES:%=%_Types.o)
 GENERATED=$(TYPE_CC) $(TYPE_HH)
 
-OBJS=$(TYPE_OBJS) hello.o
+OBJS=$(TYPE_OBJS) hello.o MNCC_EncDec.o
 
 CXXFLAGS=-DLINUX -DMAKEDEPEND_RUN -I/usr/include/titan -fPIC
 LDFLAGS=-L/usr/lib/titan -fPIC -lttcn3-dynamic
 LDFLAGS_STATIC=-L/usr/lib/titan -lttcn3 -lxml2 -lssl -lcrypto
 
-all: compile titan.a
+all: titan.a
 
 $(GENERATED):
 	ttcn3_compiler *.ttcn
