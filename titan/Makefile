@@ -14,7 +14,7 @@ LDFLAGS_STATIC=-L/usr/lib/titan -lttcn3 -lxml2 -lssl -lcrypto
 all: compile titan.a
 
 $(GENERATED):
-	ttcn3_compiler -D *.ttcn
+	ttcn3_compiler *.ttcn
 
 titan.a: $(OBJS)
 	$(AR) r $@ $^
