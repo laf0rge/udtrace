@@ -25,3 +25,4 @@ titan/titan.a:
 
 clean:
 	rm -f *.o libudtrace.so
+	$(MAKE) -C titan clean

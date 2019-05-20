@@ -1,3 +1,8 @@
+TYPE_MODULES:=General Osmocom MNCC PCUIF
+
+TYPE_CC=$(TYPE_MODULES:%=%_Types.cc)
+TYPE_HH=$(TYPE_MODULES:%=%_Types.hh)
+GENERATED=$(TYPE_CC) $(TYPE_HH)
 
 OBJS=General_Types.o Osmocom_Types.o hello.o
 OBJS+=MNCC_Types.o MNCC_EncDec.o
@@ -7,7 +12,10 @@ CXXFLAGS=-DLINUX -DMAKEDEPEND_RUN -I/usr/include/titan -fPIC
 LDFLAGS=-L/usr/lib/titan -fPIC -lttcn3-dynamic
 LDFLAGS_STATIC=-L/usr/lib/titan -lttcn3 -lxml2 -lssl -lcrypto
 
-all: titan.a
+all: compile titan.a
+
+$(GENERATED):
+	ttcn3_compiler -D *.ttcn
 
 titan.a: $(OBJS)
 	$(AR) r $@ $^
@@ -15,5 +23,6 @@ titan.a: $(OBJS)
 %.o: %.cc
 	$(CXX) $(CXXFLAGS) -c -o $@ $^
 
+.PHONY: clean
 clean:
-	@rm titan.a $(OBJS)
+	@rm -f titan.a $(OBJS) $(GENERATED)

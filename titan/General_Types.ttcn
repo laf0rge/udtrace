@@ -1,0 +1,329 @@
+/******************************************************************************
+ * Copyright (c) 2000-2017 Ericsson Telecom AB
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *   Balasko, Jeno
+ *   Baranyi, Botond
+ *
+ ******************************************************************************/
+//
+//  File:               General_Types.ttcn
+//  Rev:                <RnXnn>
+//  Prodnr:             CNL 113 368
+//  Updated:            2012-11-06
+//  Contact:            http://ttcn.ericsson.se
+//  Reference:
+
+
+module General_Types
+{
+
+group SimpleNativeTypes {
+
+  //****************************************************
+  // Bitstrings
+  //****************************************************
+
+  //bitstring with fixed length
+  type bitstring BIT1n length(1) with { variant "" };
+  type bitstring BIT2n length(2) with { variant "" };
+  type bitstring BIT3n length(3) with { variant "" };
+  type bitstring BIT4n length(4) with { variant "" };
+  type bitstring BIT5n length(5) with { variant "" };
+  type bitstring BIT6n length(6) with { variant "" };
+  type bitstring BIT7n length(7) with { variant "" };
+  type bitstring BIT8n length(8) with { variant "" };
+  type bitstring BIT9n length(9) with { variant "" };
+  type bitstring BIT12n length(12) with { variant "" };
+  type bitstring BIT14n length(14) with { variant "" };
+  type bitstring BIT15n length(15) with { variant "" };
+  type bitstring BIT16n length(16) with { variant "" };
+  type bitstring BIT56n length(56) with { variant "" };
+
+  //bitstring with length interval
+  type bitstring BIT14_24n length(14..24) with { variant "" };
+
+  //bitstring to be padded with fixed length
+  type bitstring BIT1np length(1) with { variant "" };
+  type bitstring BIT2np length(2) with { variant "" };
+  type bitstring BIT3np length(3) with { variant "" };
+  type bitstring BIT4np length(4) with { variant "" };
+  type bitstring BIT5np length(5) with { variant "" };
+  type bitstring BIT6np length(6) with { variant "" };
+  type bitstring BIT7np length(7) with { variant "" };
+  type bitstring BIT15np length(15) with { variant "" };
+
+  //bitstring with fixed length
+  type bitstring BIT1 length(1) with { variant "FIELDLENGTH(1)" };
+  type bitstring BIT2 length(2) with { variant "FIELDLENGTH(2)" };
+  type bitstring BIT3 length(3) with { variant "FIELDLENGTH(3)" };
+  type bitstring BIT4 length(4) with { variant "FIELDLENGTH(4)" };
+  type bitstring BIT5 length(5) with { variant "FIELDLENGTH(5)" };
+  type bitstring BIT6 length(6) with { variant "FIELDLENGTH(6)" };
+  type bitstring BIT7 length(7) with { variant "FIELDLENGTH(7)" };
+  type bitstring BIT8 length(8) with { variant "FIELDLENGTH(8)" };
+  type bitstring BIT9 length(9) with { variant "FIELDLENGTH(9)" };
+  type bitstring BIT10 length(10) with { variant "FIELDLENGTH(10)" };
+  type bitstring BIT11 length(11) with { variant "FIELDLENGTH(11)" };
+  type bitstring BIT12 length(12) with { variant "FIELDLENGTH(12)" };
+  type bitstring BIT13 length(13) with { variant "FIELDLENGTH(13)" };
+  type bitstring BIT14 length(14) with { variant "FIELDLENGTH(14)" };
+  type bitstring BIT15 length(15) with { variant "FIELDLENGTH(15)" };
+  type bitstring BIT16 length(16) with { variant "FIELDLENGTH(16)" };
+  type bitstring BIT24 length(24) with { variant "FIELDLENGTH(24)" };
+  type bitstring BIT28 length(28) with { variant "FIELDLENGTH(28)" };
+  type bitstring BIT29 length(29) with { variant "FIELDLENGTH(29)" };
+  type bitstring BIT30 length(30) with { variant "FIELDLENGTH(30)" };
+  type bitstring BIT31 length(31) with { variant "FIELDLENGTH(31)" };
+  type bitstring BIT32 length(32) with { variant "FIELDLENGTH(32)" };
+  type bitstring BIT56 length(56) with { variant "FIELDLENGTH(56)" };
+
+  //****************************************************
+  // Octetstrings
+  //****************************************************
+
+  //octetstring with fixed length
+  type octetstring OCT0n length(0) with { variant "" };
+  type octetstring OCT1n length(1) with { variant "" };
+  type octetstring OCT2n length(2) with { variant "" };
+  type octetstring OCT3n length(3) with { variant "" };
+  type octetstring OCT4n length(4) with { variant "" };
+  type octetstring OCT5n length(5) with { variant "" };
+  type octetstring OCT6n length(6) with { variant "" };
+  type octetstring OCT7n length(7) with { variant "" };
+  type octetstring OCT8n length(8) with { variant "" };
+  type octetstring OCT9n length(9) with { variant "" };
+  type octetstring OCT10n length(10) with { variant "" };
+  type octetstring OCT11n length(11) with { variant "" };
+  type octetstring OCT12n length(12) with { variant "" };
+  type octetstring OCT13n length(13) with { variant "" };
+  type octetstring OCT14n length(14) with { variant "" };
+  type octetstring OCT15n length(15) with { variant "" };
+  type octetstring OCT16n length(16) with { variant "" };
+  type octetstring OCT17n length(17) with { variant "" };
+  type octetstring OCT18n length(18) with { variant "" };
+  type octetstring OCT19n length(19) with { variant "" };
+  type octetstring OCT20n length(20) with { variant "" };
+  type octetstring OCT28n length(28) with { variant "" };
+  type octetstring OCT32n length(32) with { variant "" };
+  type octetstring OCT34n length(34) with { variant "" };
+  type octetstring OCT46n length(46) with { variant "" };
+  type octetstring OCT50n length(50) with { variant "" };
+  type octetstring OCT69n length(69) with { variant "" };
+  type octetstring OCT100n length(100) with { variant "" };
+  type octetstring OCT128n length(128) with { variant "" };
+  type octetstring OCT500n length(500) with { variant "" };
+  type octetstring OCTNn with { variant "" };
+
+  //octetstring with length interval
+  type octetstring OCT1_3n length(1..3) with { variant "" };
+  type octetstring OCT1_4n length(1..4) with { variant "" };
+  type octetstring OCT1_5n length(1..5) with { variant "" };
+  type octetstring OCT1_6n length(1..6) with { variant "" };
+  type octetstring OCT1_7n length(1..7) with { variant "" };
+  type octetstring OCT1_8n length(1..8) with { variant "" };
+  type octetstring OCT1_12n length(1..12) with { variant "" };
+  type octetstring OCT1_15n length(1..15) with { variant "" };
+  type octetstring OCT1_16n length(1..16) with { variant "" };
+  type octetstring OCT1_18n length(1..18) with { variant "" };
+  type octetstring OCT1_20n length(1..20) with { variant "" };
+  type octetstring OCT1_24n length(1..24) with { variant "" };
+  type octetstring OCT1_32n length(1..32) with { variant "" };
+  type octetstring OCT1_34n length(1..34) with { variant "" };
+  type octetstring OCT1_46n length(1..46) with { variant "" };
+  type octetstring OCT1_50n length(1..50) with { variant "" };
+  type octetstring OCT1_112n length(1..112) with { variant "" };
+  type octetstring OCT1_127n length(1..127) with { variant "" };
+  type octetstring OCT1_128n length(1..128) with { variant "" };
+  type octetstring OCT1_172n length(1..172) with { variant "" };
+  type octetstring OCT3_5n length(3..5) with { variant "" };
+  type octetstring OCT3_7n length(3..7) with { variant "" };
+  type octetstring OCT3_8n length(3..8) with { variant "" };
+  type octetstring OCT3_14n length(3..14) with { variant "" };
+  type octetstring OCT3_17n length(3..17) with { variant "" };
+  type octetstring OCT4_8n length(4..8) with { variant "" };
+
+
+  //****************************************************
+  // Charstrings
+  //****************************************************
+
+  //charstring with fixed length
+  type charstring CHAR4 length (4);
+
+  //****************************************************
+  // Hexstrings
+  //****************************************************
+
+  //hexstring with fixed length
+  type hexstring HEX4n length(4) with { variant "" };
+  type hexstring HEX6n length(6) with { variant "" };
+  type hexstring HEX8n length(8) with { variant "" };
+  type hexstring HEX15n length(15) with { variant "" };
+  type hexstring HEX16n length(16) with { variant "" };
+  type hexstring HEX24n length(24) with { variant "" };
+
+  //hexstring with length interval
+  type hexstring HEX0_3n length(0..3) with { variant "" };
+  type hexstring HEX0_18n length(0..18) with { variant "" };
+  type hexstring HEX1_20n length(1..20) with { variant "" };
+  type hexstring HEX1_34n length(1..34) with { variant "" };
+
+  //****************************************************
+  // Integers
+  //****************************************************
+
+  //integer with fixed bit number
+  type integer INT3nb (0..7) with { variant "" };
+  type integer INT4nb (0..15) with { variant "" };
+  type integer INT5nb (0..31) with { variant "" };
+  type integer INT8nb (0..255) with { variant "" };
+
+  //integer with fixed bit number and with padding
+  type integer INT2nbp (0..3) with { variant "" };
+  type integer INT1nbp (0..1) with { variant "" };
+  type integer INT3nbp (0..7) with { variant "" };
+  type integer INT5nbp (0..31) with { variant "" };
+  type integer INT9nbp (0..511) with { variant "" };
+  type integer INT13nbp (0..8191) with { variant "" };
+  type integer INT15nbp (0..32767) with { variant "" };
+
+} // end group NativeTypes
+
+//****************************************************
+//****************************************************
+// RAW Encoded Types
+//****************************************************
+//****************************************************
+
+group SimpleRAWEncodedTypes {
+
+  //****************************************************
+  // Bitstrings
+  //****************************************************
+
+  //bitstring with fixed length
+  type bitstring BIT6_BO_LAST length (6) with {variant "BYTEORDER(last)"};
+  type bitstring BIT16_BO_LAST length (16) with {variant "BYTEORDER(last)"};
+  type bitstring BIT32_BO_LAST length (32) with {variant "BYTEORDER(last)"};
+
+  //****************************************************
+  // Octetstrings
+  //****************************************************
+  //octetstring with fixed length
+  type octetstring Dummy length(0) with { variant "FIELDLENGTH(0)" };
+  type octetstring OCT0 length(0) with { variant "FIELDLENGTH(0)" };
+  type octetstring OCT1 length(1) with { variant "FIELDLENGTH(1)" };
+  type octetstring OCT2 length(2) with { variant "FIELDLENGTH(2)" };
+  type octetstring OCT3 length(3) with { variant "FIELDLENGTH(3)" };
+  type octetstring OCT4 length(4) with { variant "FIELDLENGTH(4)" };
+  type octetstring OCT5 length(5) with { variant "FIELDLENGTH(5)" };
+  type octetstring OCT6 length(6) with { variant "FIELDLENGTH(6)" };
+  type octetstring OCT7 length(7) with { variant "FIELDLENGTH(7)" };
+  type octetstring OCT8 length(8) with { variant "FIELDLENGTH(8)" };
+  type octetstring OCT9 length(9) with { variant "FIELDLENGTH(9)" };
+  type octetstring OCT10 length(10) with { variant "FIELDLENGTH(10)" };
+  type octetstring OCT11 length(11) with { variant "FIELDLENGTH(11)" };
+  type octetstring OCT12 length(12) with { variant "FIELDLENGTH(12)" };
+  type octetstring OCT13 length(13) with { variant "FIELDLENGTH(13)" };
+  type octetstring OCT14 length(14) with { variant "FIELDLENGTH(14)" };
+  type octetstring OCT15 length(15) with { variant "FIELDLENGTH(15)" };
+  type octetstring OCT16 length(16) with { variant "FIELDLENGTH(16)" };
+  type octetstring OCT17 length(17) with { variant "FIELDLENGTH(17)" };
+  type octetstring OCT18 length(18) with { variant "FIELDLENGTH(18)" };
+  type octetstring OCT19 length(19) with { variant "FIELDLENGTH(19)" };
+  type octetstring OCT20 length(20) with { variant "FIELDLENGTH(20)" };
+  type octetstring OCT22 length(22) with { variant "FIELDLENGTH(22)" };
+  type octetstring OCT32 length(32) with { variant "FIELDLENGTH(32)" };
+  type octetstring OCT34 length(34) with { variant "FIELDLENGTH(34)" };
+  type octetstring OCT46 length(46) with { variant "FIELDLENGTH(46)" };
+
+  //octetstring with length interval
+  type octetstring OCT1_260 length(1..260) with { variant "" };
+  type octetstring OCT1_8   length(1..8) with { variant "" };
+  type octetstring OCT1_12  length(1..12) with { variant "" };
+  type octetstring OCT1_32  length(1..32) with { variant "" };
+  type octetstring OCT1_50  length(1..50) with { variant "" };
+  type octetstring OCT3_8   length(3..8) with { variant "" };
+
+  type octetstring OCTN with { variant "" };
+
+  //****************************************************
+  // Hexstrings
+  //****************************************************
+
+  //hexstring with fixed length
+  type hexstring HEX1 length(1) with {variant "FIELDLENGTH(1)"};
+
+  //hexstring with length interval
+  type hexstring HEX0_16 length(0..16) with { variant "" };
+  type hexstring HEX5_16 length(5..16) with { variant "" };
+  type hexstring HEX1_32 length(1..32) with { variant "" };
+
+
+  //****************************************************
+  // Integers
+  //****************************************************
+
+  //integer with fixed octet number
+  type integer INT1 (0..255) with { variant "FIELDLENGTH(8)" };
+  type integer LIN1 (0..255) with { variant "FIELDLENGTH(8)" };
+  type integer LIN2 (0..65535) with { variant "FIELDLENGTH(16)" };
+  type integer LIN2_BO_LAST (0..65535) with { variant "FIELDLENGTH(16), COMP(nosign), BYTEORDER(last)" };
+  type integer LIN3_BO_LAST (0..16777215) with { variant "FIELDLENGTH(24), COMP(nosign), BYTEORDER(last)" };
+  type integer LIN4_BO_LAST (0..4294967295) with { variant "FIELDLENGTH(32), COMP(nosign), BYTEORDER(last)" };
+
+  //integer with fixed bit number
+  type integer INT1b (0..1) with { variant "FIELDLENGTH(1)" };
+  type integer INT2b (0..3) with { variant "FIELDLENGTH(2)" };
+  type integer INT3b (0..7) with { variant "FIELDLENGTH(3)" };
+  type integer INT4b (0..15) with { variant "FIELDLENGTH(4)" };
+  type integer INT5b (0..31) with { variant "FIELDLENGTH(5)" };
+  type integer INT6b (0..63) with { variant "FIELDLENGTH(6)" };
+  type integer INT7b (0..127) with { variant "FIELDLENGTH(7)" };
+  type integer INT11b_BO_LAST ( 0 .. 2047 ) with { variant "FIELDLENGTH(11), COMP(nosign), BYTEORDER(last)" };
+  type integer INT12b_BO_LAST ( 0 .. 4095 ) with { variant "FIELDLENGTH(12), COMP(nosign), BYTEORDER(last)" };
+  type integer INT13b_BO_LAST ( 0 .. 8191 ) with { variant "FIELDLENGTH(13), COMP(nosign), BYTEORDER(last)" };
+  type integer INT14b_BO_LAST ( 0 .. 16383 ) with { variant "FIELDLENGTH(14), COMP(nosign), BYTEORDER(last)" };
+  type integer INT18b_BO_LAST ( 0 .. 262143 ) with { variant "FIELDLENGTH(18), COMP(nosign), BYTEORDER(last)" };
+  type integer INT20b_BO_LAST ( 0 .. 1048575 ) with { variant "FIELDLENGTH(20), COMP(nosign), BYTEORDER(last)" };
+  type integer INT31b_BO_LAST ( 0 .. 2147483647 ) with { variant "FIELDLENGTH(31), COMP(nosign), BYTEORDER(last)" };
+
+  //****************************************************
+  // Structures
+  //****************************************************
+
+  //integer record
+  type record of integer Integers with { variant "" };
+  type record of Integers Integer_array with { variant "" };
+
+} // end group SimpleRAWEncodedTypes
+
+group ComponentTypes {
+  type component Dummy_comptype {}
+  type component Dummy_CT {}
+} // end group ComponentTypes
+
+group CompositeTypes {
+  type enumerated Protocols
+    { mtp3, sccp, isup, bicc, qaal2, gcp, bssap, bssmap, ranap, dtap }
+
+  type record of OCT1           OCT1List with { variant "" };
+  type record of OCT2           OCT2List with { variant "" };
+  type record of OCT3           OCT3List with { variant "" };
+  type record of OCT4           OCT4List with { variant "" };
+  type record of OCT5           OCT5List with { variant "" };
+  type record of OCT6           OCT6List with { variant "" };
+  type record of OCT7           OCT7List with { variant "" };
+
+  type record of Dummy_comptype ListOfDummy_comptype;
+  type record of Dummy_CT       ListOfDummy_CT;
+  type record of Protocols      ProtocolList with { variant "" };
+} // end group CompositeTypes
+
+} with { encode "RAW" } /* End of module General_Types */
+

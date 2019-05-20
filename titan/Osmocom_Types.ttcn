@@ -1,0 +1,156 @@
+module Osmocom_Types {
+
+	import from General_Types all;
+
+	type integer uint8_t (0..255) with { variant "unsigned 8 bit" };
+	type integer uint16_t (0..65535) with { variant "unsigned 16 bit" };
+	type integer uint24_t (0..16777215) with { variant "unsigned 24 bit" };
+	type integer uint32_t (0..4294967295) with { variant "unsigned 32 bit" };
+
+	type integer int8_t (-128..127) with { variant "8 bit" };
+	type integer int16_t (-32768..32767) with { variant "16 bit" };
+
+	type integer uint1_t (0..1) with { variant "unsigned 1 bit" };
+	type integer uint2_t (0..3) with { variant "unsigned 2 bit" };
+	type integer uint3_t (0..7) with { variant "unsigned 3 bit" };
+	type integer uint4_t (0..15) with { variant "unsigned 4 bit" };
+	type integer uint5_t (0..31) with { variant "unsigned 5 bit" };
+	type integer uint6_t (0..63) with { variant "unsigned 6 bit" };
+	type integer uint7_t (0..127) with { variant "unsigned 7 bit" };
+	type integer uint9_t (0..511) with { variant "unsigned 9 bit" };
+	type integer uint10_t (0..1023) with { variant "unsigned 10 bit" };
+	type integer uint11_t (0..2047) with { variant "unsigned 11 bit" };
+	type integer uint12_t (0..4095) with { variant "unsigned 12 bit" };
+	type integer uint13_t (0..8191) with { variant "unsigned 13 bit" };
+	type integer uint14_t (0..16383) with { variant "unsigned 14 bit" };
+	type integer uint15_t (0..32767) with { variant "unsigned 15 bit" };
+
+
+	const uint16_t c_UINT16_MAX := 65535;
+	const uint32_t c_UINT32_MAX := 4294967295;
+
+	type record Arfcn {
+		boolean		pcs,
+		uint15_t	arfcn
+	} with { variant "" };
+
+	/* return random integer between 0 and max */
+	function f_rnd_int(integer max) return integer {
+		return float2int(rnd()*int2float(max));
+	}
+
+	/* return hexstring composed of random digits */
+	function f_rnd_hexstring(in integer len, in integer max := 15) return hexstring {
+		var integer i;
+		var hexstring ret := ''H;
+		for (i := 0; i < len; i := i + 1) {
+			ret := ret & int2hex(f_rnd_int(max), 1);
+		}
+		return ret;
+	}
+
+	/* return octetstring composed of random bytes */
+	function f_rnd_octstring(in integer len) return octetstring {
+		var integer i;
+		var octetstring ret := ''O;
+		for (i := 0; i < len; i := i + 1) {
+			ret := ret & int2oct(f_rnd_int(255), 1);
+		}
+		return ret;
+	}
+
+	function f_rnd_imsi(in hexstring prefix) return hexstring {
+		return prefix & f_rnd_hexstring(15 - lengthof(prefix), 9);
+	}
+
+	function f_rnd_msisdn(in octetstring prefix, integer len := 6) return octetstring {
+		return prefix & f_rnd_octstring(len - lengthof(prefix));
+	}
+
+	function f_sleep(float seconds) {
+		timer T := seconds;
+		T.start;
+		T.timeout;
+	}
+
+function bool2bit(boolean inp) return BIT1 {
+	if (inp) {
+		return '1'B;
+	} else {
+		return '0'B;
+	}
+}
+
+function bool2bit_tmpl(template boolean inp) return template BIT1 {
+	if (istemplatekind(inp, "omit")) {
+		return omit;
+	} else if (istemplatekind(inp, "*")) {
+		return *;
+	} else if (istemplatekind(inp, "?")) {
+		return ?;
+	} else {
+		if (valueof(inp)) {
+			return '1'B;
+		} else {
+			return '0'B;
+		}
+	}
+}
+
+type record of integer IntegerRecord;
+
+function int2bool(integer int) return boolean {
+	if (int != 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function f_array_contains(IntegerRecord arr, integer key) return boolean {
+	for (var integer i:= 0; i< sizeof(arr); i := i + 1) {
+		if (arr[i] == key) {
+		return true;
+			}
+	}
+	return false;
+}
+
+/* re-start given timer in a warning-safe way: Stop (only if running) + start */
+function f_timer_safe_restart(timer T) {
+	if (T.running) {
+		T.stop;
+	}
+	T.start;
+}
+
+/* divide two integers and return rounded-up result */
+function f_div_round_up(integer dividend, integer divisor) return integer {
+	var integer x := dividend / divisor;
+	if (dividend rem divisor != 0) {
+		x := x+1;
+	}
+	return x;
+}
+
+function imsi_hex2oct(hexstring imsi) return octetstring {
+	var hexstring tmp := ''H;
+	var octetstring ret;
+	var integer i;
+
+	/* swap nibbles and pad with F if insufficient input nibbles */
+	for (i := 0; i < lengthof(imsi); i := i+1) {
+		if (i+1 < lengthof(imsi)) {
+			tmp := tmp & imsi[i+1];
+		} else {
+			tmp := tmp & 'F'H;
+		}
+		tmp := tmp & imsi[i];
+		i := i+1;
+	}
+	ret := hex2oct(tmp);
+	return ret;
+}
+
+
+} with { encode "RAW"; variant "FIELDORDER(msb)" }
