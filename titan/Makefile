@@ -2,11 +2,10 @@ TYPE_MODULES:=General Osmocom MNCC PCUIF
 
 TYPE_CC=$(TYPE_MODULES:%=%_Types.cc)
 TYPE_HH=$(TYPE_MODULES:%=%_Types.hh)
+TYPE_OBJS=$(TYPE_MODULES:%=%_Types.o)
 GENERATED=$(TYPE_CC) $(TYPE_HH)
 
-OBJS=General_Types.o Osmocom_Types.o hello.o
-OBJS+=MNCC_Types.o MNCC_EncDec.o
-OBJS+=PCUIF_Types.o
+OBJS=$(TYPE_OBJS) hello.o
 
 CXXFLAGS=-DLINUX -DMAKEDEPEND_RUN -I/usr/include/titan -fPIC
 LDFLAGS=-L/usr/lib/titan -fPIC -lttcn3-dynamic
